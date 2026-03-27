@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  onespace:
+    build: .
+    container_name: onespace-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - ADMIN_USERNAME=admin # 请修改为您的用户名
+      - ADMIN_PASSWORD=admin123 # 请修改为您的密码
+      - SESSION_SECRET=onespace-secret-key # 请修改为随机字符串
+      - DATABASE_URL=file:./dev.db
+    volumes:
+      # 持久化数据库文件
+      - ./prisma/dev.db:/app/prisma/dev.db
+      # 持久化配置文件
+      - ./config:/app/config
+      # 如果有上传图片，建议也持久化
+      - ./public/uploads:/app/public/uploads

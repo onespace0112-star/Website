@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+.site-logo {
+  font-size: 36px !important;
+  line-height: 1;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Default font-size for mobile is browser default (usually 16px) */
+}
+
+@media (min-width: 1024px) {
+  html {
+    /* Fluid font size for proportional scaling on desktop */
+    /* At 1920px width -> ~18px
+       At 1440px width -> ~14.4px
+       At 1024px width -> ~12px
+       This creates a "zoom out" effect as the browser shrinks */
+    font-size: clamp(12px, 0.95vw, 18px);
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-gray-200: #d7d7d7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes fadeInOut {
+  0%   { opacity: 0; transform: translateY(4px); }
+  15%  { opacity: 1; transform: translateY(0); }
+  75%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
+/* Force-hide WHY CHOOSE block */
+.hide-why-choose #why {
+  display: none !important;
+}
+
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@media (max-width: 1023px) {
+  html {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+  }
+
+  body {
+    position: static !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overscroll-behavior-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+:root[dir="rtl"] body {
+  direction: rtl;
+  text-align: right;
+}
+
+:root[dir="rtl"] .rtl-ltr {
+  direction: ltr;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.3s ease-out 0.1s forwards;
+  opacity: 0;
+}
+
+/* Hide scrollbar but keep scrolling functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

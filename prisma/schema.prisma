@@ -1,0 +1,612 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+}
+
+model Project {
+  id           Int          @id @default(autoincrement())
+  title        String
+  description  String?
+  coverImage   String?
+  slug         String?      @unique
+  content      String?
+  area         String?
+  location     String?
+  order        Int          @default(0)
+  typeId       Int?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime?
+  budgetRange  String?
+  deliverables String?
+  timeline     String?
+  fileUrl      String?
+  type         ProjectType? @relation(fields: [typeId], references: [id], onDelete: Cascade)
+}
+
+model ProjectType {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  projects  Project[]
+}
+
+model FAQ {
+  id        Int      @id @default(autoincrement())
+  question  String
+  answer    String
+  language  String   @default("zh")
+  category  String?
+  typeId    Int?
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  type      FAQType? @relation(fields: [typeId], references: [id], onDelete: Cascade)
+}
+
+model FAQType {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  faqs      FAQ[]
+}
+
+model User {
+  id                   Int                   @id @default(autoincrement())
+  email                String?               @unique
+  phone                String?               @unique
+  name                 String
+  password             String
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  chats                Chat[]
+  knowledgeSuggestions KnowledgeSuggestion[]
+  leads                Lead[]
+}
+
+model Chat {
+  id        Int           @id @default(autoincrement())
+  userId    Int
+  title     String        @default("新对话")
+  createdAt DateTime      @default(now())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  ChatMessage[]
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  chatId    Int
+  role      String
+  content   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}
+
+model KnowledgeBase {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  category  String?
+  tags      String?
+  priority  Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model KnowledgeSuggestion {
+  id              Int      @id @default(autoincrement())
+  userId          Int?
+  question        String
+  suggestedAnswer String?
+  contact         String?
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User?    @relation(fields: [userId], references: [id])
+}
+
+model TeamMember {
+  id               Int                    @id @default(autoincrement())
+  name             String
+  position         String
+  image            String?
+  serviceMotion    String?
+  skills           String?
+  order            Int                    @default(0)
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  responsibilities String?
+  workingYears     String?
+  cases            TeamCaseDistribution[]
+}
+
+model TeamCase {
+  id        Int                    @id @default(autoincrement())
+  name      String
+  image     String?
+  createdAt DateTime               @default(now())
+  members   TeamCaseDistribution[]
+}
+
+model TeamCaseDistribution {
+  id        Int        @id @default(autoincrement())
+  memberId  Int
+  caseId    Int
+  createdAt DateTime   @default(now())
+  member    TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  case      TeamCase   @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, caseId])
+}
+
+model TeamPosition {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Quote {
+  id               Int      @id @default(autoincrement())
+  projectName      String
+  email            String   @default("")
+  phone            String   @default("")
+  country          String   @default("")
+  source           String   @default("Direct")
+  projectType      String
+  propertyType     String?
+  expectedTimeline String?
+  surfaceArea      String   @default("")
+  budgetRange      String   @default("")
+  floorPlanStatus  String?
+  role             String?
+  contactMethod    String?
+  contactTime      String?
+  description      String?
+  createdAt        DateTime @default(now())
+  projectArea      String   @default("")
+  estimatedPrice   String   @default("")
+  note             String?
+}
+
+model Process {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+}
+
+model QualityAssurance {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+}
+
+model HomeCase {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+}
+
+model HomeAfterSales {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+}
+
+model HomeAdvantage {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  icon        String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+}
+
+model HomeOnespace {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+}
+
+model HomeGlobalCollect {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  icon        String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+}
+
+model HomeGallery {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+}
+
+model FaqSearchFile {
+  id        Int      @id @default(autoincrement())
+  fileUrl   String
+  fileName  String?
+  createdAt DateTime @default(now())
+}
+
+model FaqQuestionSubmission {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  email     String?
+  phone     String?
+  question  String
+  createdAt DateTime @default(now())
+}
+
+model VideoHeader {
+  id          Int      @id @default(autoincrement())
+  image       String?
+  title       String
+  height      Int      @default(600)
+  description String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model VideoType {
+  id        Int         @id @default(autoincrement())
+  name      String
+  order     Int         @default(0)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  videos    VideoItem[]
+}
+
+model VideoItem {
+  id        Int        @id @default(autoincrement())
+  typeId    Int?
+  title     String
+  videoUrl  String?
+  coverImage String?
+  order     Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?  @updatedAt
+  type      VideoType? @relation(fields: [typeId], references: [id])
+}
+
+model ServiceType {
+  id        Int           @id @default(autoincrement())
+  name      String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  items     ServiceItem[]
+}
+
+model ServiceItem {
+  id          Int         @id @default(autoincrement())
+  typeId      Int
+  image       String?
+  icon        String?
+  description String?
+  order       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime?
+  type        ServiceType @relation(fields: [typeId], references: [id], onDelete: Cascade)
+}
+
+model Carousel {
+  id        Int      @id @default(autoincrement())
+  title     String?
+  image     String
+  height    Int      @default(800)
+  order     Int      @default(0)
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SystemLog {
+  id        Int      @id @default(autoincrement())
+  action    String
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model SiteLogo {
+  id        Int      @id @default(autoincrement())
+  image     String
+  width     Int      @default(40)
+  height    Int      @default(40)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PageHeader {
+  id          Int      @id @default(autoincrement())
+  page        String
+  title       String
+  description String?
+  image       String?
+  height      Int      @default(400)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FeedbackIssueType {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  feedbacks Feedback[]
+}
+
+model Feedback {
+  id           Int                @id @default(autoincrement())
+  typeId       Int?
+  customerName String?
+  contact      String?
+  requirements String?
+  style        String?
+  delivery     String?
+  budget       String?
+  background   String?
+  status       String             @default("待处理")
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  description  String?
+  images       String?
+  type         FeedbackIssueType? @relation(fields: [typeId], references: [id])
+}
+
+model VisitLog {
+  id        Int      @id @default(autoincrement())
+  ip        String
+  source    String   @default("Direct")
+  country   String   @default("Unknown")
+  referrer  String?
+  path      String?
+  createdAt DateTime @default(now())
+}
+
+model Inquiry {
+  id               Int      @id @default(autoincrement())
+  name             String
+  email            String
+  phone            String   @default("")
+  country          String   @default("")
+  source           String   @default("Direct")
+  projectType      String?
+  propertyType     String?
+  expectedTimeline String?
+  surfaceArea      String?
+  budgetRange      String?
+  floorPlanStatus  String?
+  role             String?
+  contactMethod    String?
+  contactTime      String?
+  images           String?
+  description      String?
+  status           String   @default("待处理")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Lead {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  name      String?
+  contact   String?
+  intent    String?
+  message   String?
+  keywords  String?
+  source    String   @default("chat")
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model ContactCompanyInfo {
+  id             Int      @id @default(autoincrement())
+  mapImageEn     String?
+  mapImageZh     String?
+  companyName    String?
+  companyAddress String?
+  companyEmail   String?
+  companyPhone   String?
+  companyWebsite String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model AboutHeader {
+  id            Int      @id @default(autoincrement())
+  image         String
+  title         String
+  height        Int      @default(400)
+  description   String?
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  descriptionZh String?
+  titleZh       String?
+}
+
+model AboutIntro {
+  id            Int      @id @default(autoincrement())
+  image         String
+  description   String
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  descriptionZh String?
+}
+
+model AboutMilestone {
+  id            Int      @id @default(autoincrement())
+  image         String?
+  year          String?
+  description   String
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  imageZh       String?
+  descriptionZh String?
+}
+
+model AboutVision {
+  id            Int      @id @default(autoincrement())
+  image         String
+  description   String
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  descriptionZh String?
+}
+
+model ServiceOrder {
+  id              Int      @id @default(autoincrement())
+  serviceCategory String
+  serviceType     String
+  country         String   @default("")
+  name            String   @default("")
+  contact         String   @default("")
+  houseArea       String?
+  fee             String   @default("")
+  serviceItems    String   @default("")
+  travelDate      String?
+  createdAt       DateTime @default(now())
+}
+
+model DesignServicePackage {
+  id           Int      @id @default(autoincrement())
+  serviceType  String
+  houseArea    String   @default("")
+  fee          String
+  serviceItems String   @default("")
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ProcurementServicePackage {
+  id           Int      @id @default(autoincrement())
+  serviceType  String
+  fee          String
+  serviceItems String   @default("")
+  travelTime   String   @default("")
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ProductType {
+  id        Int       @id @default(autoincrement())
+  nameEn    String
+  nameZh    String    @default("")
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  categories ProductCategory[]
+}
+
+model ProductCategory {
+  id        Int       @id @default(autoincrement())
+  nameEn    String
+  nameZh    String    @default("")
+  typeId    Int
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  type      ProductType @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  products  Product[]
+}
+
+model Product {
+  id         Int       @id @default(autoincrement())
+  nameEn     String
+  nameZh     String    @default("")
+  image      String    @default("")
+  categoryId Int
+  sortOrder  Int       @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  category   ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model ProductStyle {
+  id        Int                @id @default(autoincrement())
+  name      String
+  nameZh    String             @default("")
+  fileUrl   String             @default("")
+  fileName  String             @default("")
+  sortOrder Int                @default(0)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  items     ProductStyleItem[]
+}
+
+model ProductStyleItem {
+  id        Int          @id @default(autoincrement())
+  styleId   Int
+  title     String       @default("")
+  imageUrl  String       @default("")
+  pageNum   Int          @default(0)
+  sortOrder Int          @default(0)
+  createdAt DateTime     @default(now())
+  style     ProductStyle @relation(fields: [styleId], references: [id], onDelete: Cascade)
+}
+
+model VerificationCode {
+  id        Int      @id @default(autoincrement())
+  target    String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model LegalDocument {
+  id        Int      @id @default(autoincrement())
+  type      String   @unique
+  fileUrl   String   @default("")
+  fileName  String   @default("")
+  content   String   @default("")
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
