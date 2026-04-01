@@ -58,6 +58,7 @@ const menuItems: MenuItem[] = [
             { title: '优势管理', href: '/admin/home/advantages' },
             { title: '售后管理', href: '/admin/home/aftersales' },
             { title: '成交案例管理', href: '/admin/home/cases' },
+            { title: '公司简介管理', href: '/admin/home/company-intro' },
         ]
     },
     {
