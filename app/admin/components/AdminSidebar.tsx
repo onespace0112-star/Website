@@ -23,7 +23,6 @@ import {
     ClipboardList,
     Video,
     ShoppingCart,
-    Package,
     KeyRound
 } from 'lucide-react'
 
@@ -74,14 +73,6 @@ const menuItems: MenuItem[] = [
             { title: '服务列表管理', href: '/admin/services/list' },
             { title: '服务类型管理', href: '/admin/services/types' },
             { title: '质量保证管理', href: '/admin/services/qa' },
-        ]
-    },
-    {
-        title: '产品管理',
-        icon: <Package size={18} />,
-        children: [
-            { title: '头部管理', href: '/admin/products/headers' },
-            { title: '产品分类管理', href: '/admin/products/styles' },
         ]
     },
     {
