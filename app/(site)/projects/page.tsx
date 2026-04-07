@@ -3,8 +3,10 @@ import prisma from '@/lib/prisma'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-    title: 'Projects | ONE SPACE',
-    description: 'Explore ONE SPACE completed luxury villa, apartment, hotel, and commercial projects worldwide.',
+    title: '全球项目 Projects | ONE SPACE',
+    description: '浏览 ONE SPACE 全球已交付高端住宅项目：别墅、公寓、酒店。Explore completed luxury villa, apartment, hotel projects worldwide by ONE SPACE.',
+    keywords: ['全球项目', '已交付项目', '别墅项目', '酒店项目', 'global projects', 'completed projects', 'luxury villa'],
+    alternates: { canonical: 'https://onespacecn.com/projects' },
 }
 
 export default async function ProjectsPage() {

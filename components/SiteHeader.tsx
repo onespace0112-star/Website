@@ -75,7 +75,6 @@ export default function SiteHeader() {
                     <div className="hidden md:flex items-center gap-8 text-base uppercase tracking-widest font-medium">
                         <Link href="/" className={getLinkClass('/')}>{t.nav.home}</Link>
                         <Link href="/services" className={getLinkClass('/services')}>{t.nav.services}</Link>
-                        <Link href="/product" className={getLinkClass('/product')}>{t.nav.product}</Link>
                         <Link href="/process" className={getLinkClass('/process')}>{t.nav.process}</Link>
                         <Link href="/cases" className={getLinkClass('/cases')}>{t.nav.cases}</Link>
                         <Link href="/team" className={getLinkClass('/team')}>{t.nav.team}</Link>
@@ -129,7 +128,6 @@ export default function SiteHeader() {
                         <div className="flex flex-col gap-6 text-[17px] text-white font-normal tracking-wide">
                             <Link href="/" className="hover:text-[#db2777] transition-colors" onClick={() => setIsMobileMenuOpen(false)}>{t.nav.home}</Link>
                             <Link href="/services" className="hover:text-[#db2777] transition-colors" onClick={() => setIsMobileMenuOpen(false)}>{t.nav.services}</Link>
-                            <Link href="/product" className="hover:text-[#db2777] transition-colors" onClick={() => setIsMobileMenuOpen(false)}>{t.nav.product}</Link>
                             <Link href="/process" className="hover:text-[#db2777] transition-colors" onClick={() => setIsMobileMenuOpen(false)}>{t.nav.process}</Link>
                             <Link href="/cases" className="hover:text-[#db2777] transition-colors" onClick={() => setIsMobileMenuOpen(false)}>{t.nav.cases}</Link>
                             <Link href="/team" className="hover:text-[#db2777] transition-colors" onClick={() => setIsMobileMenuOpen(false)}>{t.nav.team}</Link>

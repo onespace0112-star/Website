@@ -3,8 +3,10 @@ import prisma from '@/lib/prisma'
 import HomeClient from '@/components/HomeClient'
 
 export const metadata: Metadata = {
-    title: 'ONE SPACE | Premium Furniture & Home Furnishing Solutions',
-    description: 'ONE SPACE is a global one-stop solution provider for luxury home furnishings, building materials, and soft furnishings. Serving villas, hotels, and commercial projects worldwide.',
+    title: 'ONE SPACE | 高端住宅一站式交付 | Luxury Home Furnishing Solutions',
+    description: 'ONE SPACE 专注高端住宅一站式交付：设计对接、家具采购、QC验货、跨境物流、安装协调。服务全球别墅、酒店及商业项目。Global one-stop provider for luxury home furnishings.',
+    keywords: ['高端住宅交付', '家具采购', 'QC验货', '跨境物流', '安装协调', '别墅装修', '整屋交付', 'ONE SPACE', 'luxury furniture sourcing', 'quality control', 'home furnishing'],
+    alternates: { canonical: 'https://onespacecn.com' },
 }
 import { serializeCarousel } from '@/lib/dto/carousel'
 import { serializeArray, serializeDate } from '@/lib/dto/serialize'

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'FAQ | ONE SPACE 常见问题',
         description: '关于 ONE SPACE 高端住宅一站式交付服务的常见问题解答',
-        url: 'https://onespace.com/faq',
+        url: 'https://onespacecn.com/faq',
         siteName: 'ONE SPACE',
         type: 'website',
     },

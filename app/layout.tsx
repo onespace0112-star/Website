@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     description: "设计语言 → 可采购清单 → QC证据链 → 到场计划 → 安装协调。服务全球高端住宅客户。",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/images/hero_luxury_house.png",
         width: 1200,
         height: 630,
         alt: "ONE SPACE - 高端住宅一站式交付",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ONE SPACE | 高端住宅一站式交付",
     description: "设计语言 → 可采购清单 → QC证据链 → 到场计划 → 安装协调",
-    images: ["/og-image.jpg"],
+    images: ["/images/hero_luxury_house.png"],
   },
   robots: {
     index: true,
@@ -70,9 +70,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "your-google-verification-code",
-  },
+  // verification: {
+  //   google: "your-google-verification-code",
+  // },
 };
 
 // JSON-LD Structured Data
@@ -194,7 +194,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" dir="ltr" suppressHydrationWarning>
+    <html lang="zh-Hans" dir="ltr" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
