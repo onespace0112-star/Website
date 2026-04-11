@@ -85,6 +85,12 @@ export default function AdminDashboard() {
     const [visitRange, setVisitRange] = useState('24h')
     const [loadingVisits, setLoadingVisits] = useState(true)
 
+    const [visitStats, setVisitStats] = useState<{ total: number, rows: any[] } | null>(null)
+    const [visitStatsRange, setVisitStatsRange] = useState('7d')
+    const [visitStatsPage, setVisitStatsPage] = useState(1)
+    const [loadingVisitStats, setLoadingVisitStats] = useState(true)
+    const visitStatsPageSize = 20
+
     const timeRanges = ['近7天', '近30天', '本月', '本年']
     const visitRanges = [
         { label: '1h', value: '1h' },
@@ -95,9 +101,22 @@ export default function AdminDashboard() {
         { label: '30d', value: '30d' },
     ]
 
+    const fetchVisitStats = async (range: string, page: number) => {
+        setLoadingVisitStats(true)
+        try {
+            const res = await fetch(`/api/admin/visit-stats?range=${range}&page=${page}&pageSize=${visitStatsPageSize}`, { cache: 'no-store' })
+            if (res.ok) setVisitStats(await res.json())
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setLoadingVisitStats(false)
+        }
+    }
+
     useEffect(() => {
         fetchDashboardData()
         fetchVisitData(visitRange)
+        fetchVisitStats(visitStatsRange, visitStatsPage)
 
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -144,6 +163,17 @@ export default function AdminDashboard() {
     const handleVisitRangeChange = (range: string) => {
         setVisitRange(range)
         fetchVisitData(range)
+    }
+
+    const handleVisitStatsRangeChange = (range: string) => {
+        setVisitStatsRange(range)
+        setVisitStatsPage(1)
+        fetchVisitStats(range, 1)
+    }
+
+    const handleVisitStatsPageChange = (page: number) => {
+        setVisitStatsPage(page)
+        fetchVisitStats(visitStatsRange, page)
     }
 
     const handleExportSourceStats = () => {
@@ -452,6 +482,101 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Visit Statistics Table */}
+            <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
+                <div className="px-10 py-8 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div>
+                        <h3 className="text-xl font-black text-slate-900 tracking-tight">用户访问数据统计</h3>
+                        <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">
+                            共 {visitStats?.total ?? 0} 条记录
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-2 bg-slate-50 p-1 rounded-2xl">
+                        {[{ label: '近1天', value: '1d' }, { label: '近7天', value: '7d' }, { label: '近30天', value: '30d' }].map(r => (
+                            <button
+                                key={r.value}
+                                onClick={() => handleVisitStatsRangeChange(r.value)}
+                                className={`px-4 py-2 text-xs font-black rounded-xl transition-all ${visitStatsRange === r.value ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            >
+                                {r.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                <div className="overflow-x-auto">
+                    {loadingVisitStats ? (
+                        <div className="flex justify-center items-center py-16">
+                            <RefreshCcw className="animate-spin text-slate-200" size={28} />
+                        </div>
+                    ) : (
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="bg-slate-50/50 text-slate-400 border-b border-slate-100">
+                                    {['访问来源', '来源网站', '搜索关键词', '浏览器类型', '操作系统', '访问设备类型', '访问时间', '访问页面路径', '访问IP地址', '访问次数'].map(h => (
+                                        <th key={h} className="px-5 py-4 text-left text-[10px] font-black uppercase tracking-widest whitespace-nowrap">{h}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                                {(visitStats?.rows || []).length === 0 ? (
+                                    <tr><td colSpan={10} className="px-10 py-10 text-center text-slate-400">暂无访问数据</td></tr>
+                                ) : (
+                                    (visitStats?.rows || []).map((row: any) => (
+                                        <tr key={row.id} className="hover:bg-slate-50/40 transition-colors">
+                                            <td className="px-5 py-4 font-bold text-slate-700 whitespace-nowrap">
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                                                    row.source === 'Direct' ? 'bg-slate-100 text-slate-600' :
+                                                    row.source === 'Search' ? 'bg-blue-50 text-blue-600' :
+                                                    row.source === 'Social' ? 'bg-purple-50 text-purple-600' :
+                                                    'bg-amber-50 text-amber-600'
+                                                }`}>{row.source}</span>
+                                            </td>
+                                            <td className="px-5 py-4 text-slate-500 max-w-[120px] truncate">{row.referrerHost}</td>
+                                            <td className="px-5 py-4 text-slate-500">{row.searchKeyword}</td>
+                                            <td className="px-5 py-4 text-slate-600 whitespace-nowrap">{row.browser}</td>
+                                            <td className="px-5 py-4 text-slate-600 whitespace-nowrap">{row.os}</td>
+                                            <td className="px-5 py-4 whitespace-nowrap">
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                                                    row.device === 'Mobile' ? 'bg-rose-50 text-rose-600' :
+                                                    row.device === 'Tablet' ? 'bg-amber-50 text-amber-600' :
+                                                    'bg-emerald-50 text-emerald-600'
+                                                }`}>{row.device}</span>
+                                            </td>
+                                            <td className="px-5 py-4 text-slate-500 whitespace-nowrap text-xs">
+                                                {new Date(row.visitTime).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                                            </td>
+                                            <td className="px-5 py-4 text-slate-500 max-w-[150px] truncate text-xs font-mono">{row.path}</td>
+                                            <td className="px-5 py-4 text-slate-500 text-xs font-mono whitespace-nowrap">{row.ip}</td>
+                                            <td className="px-5 py-4 text-center font-black text-slate-700">{row.visitCount}</td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+                {/* Pagination */}
+                {visitStats && visitStats.total > visitStatsPageSize && (
+                    <div className="px-10 py-6 border-t border-slate-50 flex items-center justify-between">
+                        <span className="text-xs text-slate-400 font-bold">
+                            第 {visitStatsPage} 页 / 共 {Math.ceil(visitStats.total / visitStatsPageSize)} 页
+                        </span>
+                        <div className="flex gap-2">
+                            <button
+                                disabled={visitStatsPage <= 1}
+                                onClick={() => handleVisitStatsPageChange(visitStatsPage - 1)}
+                                className="px-4 py-2 text-xs font-black rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                            >上一页</button>
+                            <button
+                                disabled={visitStatsPage >= Math.ceil(visitStats.total / visitStatsPageSize)}
+                                onClick={() => handleVisitStatsPageChange(visitStatsPage + 1)}
+                                className="px-4 py-2 text-xs font-black rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                            >下一页</button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Geographic Distribution Table */}

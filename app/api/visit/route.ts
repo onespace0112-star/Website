@@ -78,6 +78,31 @@ function getClientIp(headersList: Headers): string {
     return 'unknown'
 }
 
+function parseUserAgent(ua: string): { browser: string; os: string; device: string } {
+    const s = ua || ''
+
+    let browser = 'Unknown'
+    if (/Edg\//.test(s)) browser = 'Edge'
+    else if (/OPR\/|Opera/.test(s)) browser = 'Opera'
+    else if (/Chrome\//.test(s) && !/Chromium/.test(s)) browser = 'Chrome'
+    else if (/Firefox\//.test(s)) browser = 'Firefox'
+    else if (/Safari\//.test(s) && !/Chrome/.test(s)) browser = 'Safari'
+    else if (/MSIE|Trident/.test(s)) browser = 'IE'
+
+    let os = 'Unknown'
+    if (/Windows NT/.test(s)) os = 'Windows'
+    else if (/Mac OS X/.test(s) && !/iPhone|iPad/.test(s)) os = 'MacOS'
+    else if (/Android/.test(s)) os = 'Android'
+    else if (/iPhone|iPad/.test(s)) os = 'iOS'
+    else if (/Linux/.test(s)) os = 'Linux'
+
+    let device = 'Desktop'
+    if (/Mobile|iPhone|Android.*Mobile/.test(s)) device = 'Mobile'
+    else if (/iPad|Tablet|tablet/.test(s)) device = 'Tablet'
+
+    return { browser, os, device }
+}
+
 function isPrivateOrLocalIp(ip: string): boolean {
     if (!ip || ip === 'unknown') return true
     const lowerIp = ip.toLowerCase()
@@ -118,6 +143,8 @@ export async function POST(request: Request) {
         const path = body.path || '/'
         const referrer = (body.referrer || headersList.get('referer') || '').toString()
         const source = detectSource(path, referrer, body.source)
+        const userAgent = headersList.get('user-agent') || ''
+        const { browser, os, device } = parseUserAgent(userAgent)
 
         await prisma.visitLog.create({
             data: {
@@ -125,7 +152,10 @@ export async function POST(request: Request) {
                 path,
                 referrer,
                 source,
-                country
+                country,
+                browser,
+                os,
+                device,
             }
         })
 

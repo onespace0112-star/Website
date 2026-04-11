@@ -405,6 +405,9 @@ model VisitLog {
   country   String   @default("Unknown")
   referrer  String?
   path      String?
+  browser   String   @default("Unknown")
+  os        String   @default("Unknown")
+  device    String   @default("Desktop")
   createdAt DateTime @default(now())
 }
 
